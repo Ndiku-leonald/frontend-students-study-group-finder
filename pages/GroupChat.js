@@ -21,5 +21,7 @@ function GroupChat({ groupId }) {
     </div>
   );
 }
-
+<div className="card">
+  <h3>Group Chat</h3>
+</div>
 export default GroupChat;
