@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-
+<h3>Welcome, User!</h3>
 function Dashboard() {
   const [groups, setGroups] = useState([]);
 
