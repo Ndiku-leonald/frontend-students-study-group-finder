@@ -10,5 +10,7 @@ function Navbar() {
     </nav>
   );
 }
-
+<Link to="/create-group">Create Group</Link>
+<Link to="/chat">Chat</Link>
+<Link to="/session">Session</Link>
 export default Navbar;
