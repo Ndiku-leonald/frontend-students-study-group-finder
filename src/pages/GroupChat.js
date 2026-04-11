@@ -1,27 +1,26 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 
 function GroupChat({ groupId }) {
   const [message, setMessage] = useState("");
 
   const sendMessage = async () => {
-    await axios.post(
-      http://localhost:5000/api/posts/${groupId},
-      { content: message },
-      { headers: { Authorization: localStorage.getItem("token") } }
-    );
+    await api.post(`/posts/${groupId ?? ''}`, { content: message });
     setMessage("");
   };
 
   return (
-    <div>
-      <h3>Group Chat</h3>
-      <input value={message} onChange={e => setMessage(e.target.value)} />
-      <button onClick={sendMessage}>Send</button>
-    </div>
+    <main className="page-content">
+      <header className="page-header">
+        <h2>Group Chat</h2>
+        <p>Send messages to your study group.</p>
+      </header>
+      <section className="card page-card chat-card">
+        <input className="form-input" value={message} onChange={e => setMessage(e.target.value)} />
+        <button className="btn btn-primary" onClick={sendMessage}>Send</button>
+      </section>
+    </main>
   );
 }
-<div className="card">
-  <h3>Group Chat</h3>
-</div>
+
 export default GroupChat;
