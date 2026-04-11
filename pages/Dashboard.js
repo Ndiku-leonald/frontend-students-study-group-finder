@@ -48,4 +48,5 @@ function Dashboard() {
   Join Group
 </button>
 
+<p>{g.members} members</p>
 export default Dashboard;
