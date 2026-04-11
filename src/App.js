@@ -7,20 +7,17 @@ import CreateGroup from './pages/CreateGroup';
 import GroupChat from './pages/GroupChat';
 import CreateSession from './pages/CreateSession';
 
-<Route path="/create-group" element={<CreateGroup />} />
-<Route path="/chat" element={<GroupChat />} />
-<Route path="/session" element={<CreateSession />} />
-<Routes>
-  <Route path="/" element={<Dashboard />} />
-  <Route path="/login" element={<Login />} />
-  <Route path="/register" element={<Register />} />
-</Routes>
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
       <Routes>
-        {/* pages will come later */}
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/create-group" element={<CreateGroup />} />
+        <Route path="/chat" element={<GroupChat />} />
+        <Route path="/session" element={<CreateSession />} />
       </Routes>
     </BrowserRouter>
   );
