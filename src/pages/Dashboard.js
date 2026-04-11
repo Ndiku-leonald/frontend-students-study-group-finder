@@ -50,3 +50,4 @@ function Dashboard() {
 
 <p>{g.members} members</p>
 export default Dashboard;
+<button>❤️ Save</button>
