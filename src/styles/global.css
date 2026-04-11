@@ -2,13 +2,37 @@ body {
   margin: 0;
   font-family: Arial;
   background-color: #0f172a;
-  color: white; /* KEEP TEXT COLOR SAME */
+  color: white;
 }
 
+/* Cards */
+.card {
+  padding: 20px;
+  border-radius: 12px;
+  margin: 15px;
+  background: #1e293b;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+/* Buttons */
 button {
   background: #2563eb;
   color: white;
   border: none;
   padding: 10px;
+  border-radius: 8px;
   cursor: pointer;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+/* Inputs */
+input, textarea {
+  padding: 10px;
+  margin: 5px;
+  border-radius: 6px;
+  border: none;
+  width: 100%;
 }
