@@ -21,5 +21,11 @@ function Dashboard() {
     </div>
   );
 }
-
+<input 
+  placeholder="Search"
+  onChange={async (e) => {
+    const res = await axios.get(`http://localhost:5000/api/groups/search?query=${e.target.value}`);
+    setGroups(res.data);
+  }}
+/>
 export default Dashboard;
