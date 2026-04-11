@@ -27,5 +27,12 @@ function Dashboard() {
     const res = await axios.get(`http://localhost:5000/api/groups/search?query=${e.target.value}`);
     setGroups(res.data);
   }}
-/>
+/>;
+<button onClick={async () => {
+  await axios.post(`http://localhost:5000/api/favorites/${g.id}`, {}, {
+    headers: { Authorization: localStorage.getItem("token") }
+  });
+}}>
+  ❤️ Save
+</button>
 export default Dashboard;
