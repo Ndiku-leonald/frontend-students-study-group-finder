@@ -1,5 +1,10 @@
 import { Link } from 'react-router-dom';
-
+<button onClick={() => {
+  localStorage.removeItem("token");
+  window.location.href = "/login";
+}}>
+  Logout
+</button>
 function Navbar() {
   return (
     <nav>
