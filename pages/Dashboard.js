@@ -35,17 +35,4 @@ function Dashboard() {
 }}>
   ❤️ Save
 </button>
-<button onClick={async () => {
-  await axios.post(
-    `http://localhost:5000/api/groups/join/${g.id}`,
-    {},
-    {
-      headers: { Authorization: localStorage.getItem("token") }
-    }
-  );
-  alert("Joined group");
-}}>
-  Join Group
-</button>
-
 export default Dashboard;
