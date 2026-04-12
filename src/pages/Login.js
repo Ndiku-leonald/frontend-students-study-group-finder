@@ -4,15 +4,26 @@ import { saveToken, saveUser } from '../services/auth';
 import api from '../services/api';
 
 function Login() {
-  const [form, setForm] = useState({});
+  const [form, setForm] = useState({ role: 'student', accessCode: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
     setError('');
 
+    if (form.role === 'admin' && !form.accessCode.trim()) {
+      setError('Admin access code is required.');
+      return;
+    }
+
     try {
-      const res = await api.post('/auth/login', form);
+      const payload = {
+        ...form,
+        email: (form.email || '').trim().toLowerCase(),
+        accessCode: (form.accessCode || '').trim()
+      };
+
+      const res = await api.post('/auth/login', payload);
       saveToken(res.data.token);
       saveUser(res.data.user);
       navigate('/');
@@ -29,11 +40,42 @@ function Login() {
           <p>Sign in to continue</p>
         </header>
         <div className="card form-card">
-          <h2>Login</h2>
-          <p className="form-subtitle">Welcome back. Enter your account details.</p>
+          <h2>{form.role === 'admin' ? 'Admin Login' : 'Student Login'}</h2>
+          <p className="form-subtitle">Choose your account type and sign in.</p>
           {error ? <p className="form-error">{error}</p> : null}
+          <div className="role-toggle" role="radiogroup" aria-label="Login type">
+            <label className={`role-option ${form.role === 'student' ? 'role-option-active' : ''}`}>
+              <input
+                type="radio"
+                name="loginRole"
+                value="student"
+                checked={form.role === 'student'}
+                onChange={e => setForm({ ...form, role: e.target.value })}
+              />
+              <span>
+                <strong>Student</strong>
+                <small>Browse and join study groups</small>
+              </span>
+            </label>
+            <label className={`role-option ${form.role === 'admin' ? 'role-option-active' : ''}`}>
+              <input
+                type="radio"
+                name="loginRole"
+                value="admin"
+                checked={form.role === 'admin'}
+                onChange={e => setForm({ ...form, role: e.target.value })}
+              />
+              <span>
+                <strong>Administrator</strong>
+                <small>Manage the platform</small>
+              </span>
+            </label>
+          </div>
           <input className="form-input" placeholder="Email" onChange={e => setForm({...form, email: e.target.value})}/>
           <input className="form-input" placeholder="Password" type="password" onChange={e => setForm({...form, password: e.target.value})}/>
+          {form.role === 'admin' ? (
+            <input className="form-input" placeholder="Admin access code" value={form.accessCode} onChange={e => setForm({ ...form, accessCode: e.target.value })}/>
+          ) : null}
           <button className="btn btn-primary" onClick={handleSubmit}>Login</button>
           <p className="auth-switch">
             New here? <Link to="/register">Sign up</Link>

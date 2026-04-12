@@ -1,10 +1,18 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { clearToken, getUserDisplayName, getUserRole } from '../services/auth';
 
 function Navbar() {
-  const displayName = getUserDisplayName();
-  const role = getUserRole();
+  const [displayName, setDisplayName] = useState(getUserDisplayName());
+  const [role, setRole] = useState(getUserRole());
+
+  useEffect(() => {
+    setDisplayName(getUserDisplayName());
+    setRole(getUserRole());
+  }, []);
+
   const roleLabel = role === 'admin' ? 'Administrator' : 'Student';
+  const roleBadgeClass = role === 'admin' ? 'sidebar-role-badge sidebar-role-badge-admin' : 'sidebar-role-badge sidebar-role-badge-student';
   const avatarText = displayName
     .split(' ')
     .filter(Boolean)
@@ -26,6 +34,7 @@ function Navbar() {
           <div className="sidebar-user-name">{displayName}</div>
           <div className="sidebar-user-role">{roleLabel}</div>
         </div>
+        <div className={roleBadgeClass}>{roleLabel}</div>
       </div>
 
       <nav className="sidebar-nav">

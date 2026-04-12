@@ -5,6 +5,7 @@ import { getToken, getUserFromToken } from '../services/auth';
 
 function GroupList() {
   const [groups, setGroups] = useState([]);
+  const [userGroups, setUserGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [joiningGroupId, setJoiningGroupId] = useState(null);
   const [joinMessage, setJoinMessage] = useState('');
@@ -50,11 +51,16 @@ function GroupList() {
 
       const query = params.toString();
       const endpoint = query ? `/groups/search?${query}` : '/groups';
-      const res = await api.get(endpoint);
-      setGroups(Array.isArray(res.data) ? res.data : []);
+      const [groupsRes, userGroupsRes] = await Promise.all([
+        api.get(endpoint),
+        isAuthenticated ? api.get('/users/me/groups') : Promise.resolve({ data: [] })
+      ]);
+      setGroups(Array.isArray(groupsRes.data) ? groupsRes.data : []);
+      setUserGroups(Array.isArray(userGroupsRes.data) ? userGroupsRes.data : []);
       setError('');
     } catch (err) {
       setGroups([]);
+      setUserGroups([]);
       setError('Unable to load groups. Please try again later.');
     } finally {
       setLoading(false);
@@ -75,11 +81,11 @@ function GroupList() {
   }, [groups, loading]);
 
   const isGroupLeader = (group) => {
-    return currentUser && (group.leaderId === currentUser.id || group.leader?.id === currentUser.id);
+    return currentUser && group.userId === currentUser.id;
   };
 
   const isGroupMember = (group) => {
-    return currentUser && group.members?.some(member => member.id === currentUser.id);
+    return userGroups.some(userGroup => userGroup.id === group.id);
   };
 
   return (
@@ -122,12 +128,12 @@ function GroupList() {
             <div className="group-grid">
               {groups.map((group) => (
                 <article className={`group-card ${isGroupLeader(group) ? 'group-card-leader' : ''}`} key={group.id}>
+                  {isGroupLeader(group) && <div className="group-leader-badge">Group Leader</div>}
                   <div className="group-card-top">
                     <div>
                       <div className="group-course">{group.course || 'Study Group'}</div>
                       <h3 className="group-title">
                         {group.name || group.title}
-                        {isGroupLeader(group) && <span className="leader-badge"> (Leader)</span>}
                       </h3>
                       {group.leader && (
                         <div className="group-leader">Led by {group.leader.name || group.leader.fullName}</div>

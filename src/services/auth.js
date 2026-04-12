@@ -68,6 +68,11 @@ export function getUserDisplayName() {
   return user.name || user.fullName || user.displayName || 'Study Group User';
 }
 
+export function getUserAdminCode() {
+  const user = getUser() || getUserFromToken();
+  return user?.adminCode || null;
+}
+
 export function getUserId() {
   const user = getUser() || getUserFromToken();
   return user?.id || null;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
-import { getUserDisplayName, getToken } from '../services/auth';
+import { getUserAdminCode, getUserDisplayName, getToken } from '../services/auth';
 
 function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -11,14 +11,12 @@ function AdminDashboard() {
     activeCourses: [],
   });
   const [users, setUsers] = useState([]);
-  const [joinedGroups, setJoinedGroups] = useState([]);
-  const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [recentGroups, setRecentGroups] = useState([]);
-  const [allGroups, setAllGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const userName = getUserDisplayName();
+  const adminCode = getUserAdminCode();
   const isAuthenticated = !!getToken();
 
   useEffect(() => {
@@ -26,20 +24,10 @@ function AdminDashboard() {
 
     const loadData = async () => {
       try {
-        const [
-          statsRes,
-          usersRes,
-          groupsRes,
-          sessionsRes,
-          recentRes,
-          allGroupsRes
-        ] = await Promise.allSettled([
-          api.get('/admin/overview'),
+        const [statsRes, usersRes, recentRes] = await Promise.allSettled([
+          api.get('/dashboard/admin'),
           api.get('/auth/users'),
-          api.get('/users/me/groups'),
-          api.get('/users/me/sessions/upcoming'),
           api.get('/groups/recent'),
-          api.get('/groups'),
         ]);
 
         if (statsRes.status === 'fulfilled') {
@@ -47,15 +35,12 @@ function AdminDashboard() {
             totalUsers: statsRes.value.data.totalUsers || 0,
             totalGroups: statsRes.value.data.totalGroups || 0,
             totalSessions: statsRes.value.data.totalSessions || 0,
-            activeCourses: statsRes.value.data.activeCourses || [],
+            activeCourses: statsRes.value.data.mostActiveCourses || [],
           });
         }
 
         if (usersRes.status === 'fulfilled') setUsers(usersRes.value.data || []);
-        if (groupsRes.status === 'fulfilled') setJoinedGroups(groupsRes.value.data || []);
-        if (sessionsRes.status === 'fulfilled') setUpcomingSessions(sessionsRes.value.data || []);
         if (recentRes.status === 'fulfilled') setRecentGroups(recentRes.value.data || []);
-        if (allGroupsRes.status === 'fulfilled') setAllGroups(allGroupsRes.value.data || []);
       } catch (err) {
         setError('Failed to load dashboard data');
       } finally {
@@ -65,17 +50,6 @@ function AdminDashboard() {
 
     loadData();
   }, [isAuthenticated]);
-
-  const joinGroup = async (groupId) => {
-    try {
-      await api.post(`/groups/join/${groupId}`);
-      // Refresh joined groups
-      const groupsRes = await api.get('/users/me/groups');
-      setJoinedGroups(groupsRes.data || []);
-    } catch (err) {
-      setError('Failed to join group');
-    }
-  };
 
   if (!isAuthenticated) {
     return (
@@ -93,10 +67,11 @@ function AdminDashboard() {
       <header className="page-hero card">
         <div className="page-hero-copy">
           <h2>Welcome, {userName}!</h2>
-          <p>Administrator Dashboard - Monitor users, groups, and system activity.</p>
+          <p>Administrator Control Panel - monitor platform activity and user roles.</p>
+          {adminCode ? <p className="admin-code-chip">Admin Code: {adminCode}</p> : null}
           <div className="hero-actions">
-            <Link to="/groups/new" className="btn btn-primary">Create Group</Link>
-            <Link to="/groups" className="btn btn-secondary">Browse Groups</Link>
+            <Link to="/groups" className="btn btn-primary">Manage Groups</Link>
+            <Link to="/invites" className="btn btn-secondary">Review Invites</Link>
           </div>
         </div>
 
@@ -141,73 +116,54 @@ function AdminDashboard() {
           <p>Loading users...</p>
         ) : users.length ? (
           <div className="user-list">
-            {users.slice(0, 10).map((user) => (
+            {users.slice(0, 15).map((user) => (
               <div key={user.id} className="user-item">
                 <div>
                   <strong>{user.name}</strong>
                   <span className="user-email"> ({user.email})</span>
                 </div>
-                <span className="user-role">{user.role || 'student'}</span>
+                <span className="user-role">{user.role === 'admin' ? 'admin' : 'student'}</span>
               </div>
             ))}
-            {users.length > 10 && <p>... and {users.length - 10} more users</p>}
+            {users.length > 15 && <p>... and {users.length - 15} more users</p>}
           </div>
         ) : (
           <p>No users found.</p>
         )}
       </section>
 
-      {/* Student Dashboard Features */}
+      {/* Admin Activity */}
       <section className="card page-card detail-grid">
         <article className="detail-panel">
-          <h3>My Groups</h3>
-          {loading ? (
-            <p>Loading...</p>
-          ) : joinedGroups.length ? (
-            joinedGroups.map((group) => (
-              <div key={group.id} className="group-item">
-                <p>{group.name}</p>
-                <Link className="btn btn-small" to={`/groups/${group.id}`}>View</Link>
-              </div>
-            ))
-          ) : (
-            <p>No joined groups yet.</p>
-          )}
-          <Link className="btn btn-secondary btn-small" to="/groups">Browse All Groups</Link>
-        </article>
-
-        <article className="detail-panel">
-          <h3>Upcoming Sessions</h3>
-          {loading ? (
-            <p>Loading...</p>
-          ) : upcomingSessions.length ? (
-            upcomingSessions.map((session) => (
-              <p key={session.id}>{session.date} {session.time}</p>
-            ))
-          ) : (
-            <p>No upcoming sessions.</p>
-          )}
-        </article>
-
-        <article className="detail-panel">
-          <h3>Recent Activity</h3>
+          <h3>Recently Created Groups</h3>
           {loading ? (
             <p>Loading...</p>
           ) : recentGroups.length ? (
             recentGroups.map((group) => (
               <div key={group.id} className="group-item">
                 <p>{group.name}</p>
-                <button
-                  className="btn btn-small"
-                  onClick={() => joinGroup(group.id)}
-                >
-                  Join
-                </button>
+                <Link className="btn btn-small" to={`/groups/${group.id}`}>View</Link>
               </div>
             ))
           ) : (
             <p>No recent groups.</p>
           )}
+          <Link className="btn btn-secondary btn-small" to="/groups">Open Group Directory</Link>
+        </article>
+
+        <article className="detail-panel">
+          <h3>Admin Shortcuts</h3>
+          <p>Use these actions to manage platform activity quickly.</p>
+          <div className="card-actions">
+            <Link className="btn btn-small" to="/groups/new">Create New Group</Link>
+            <Link className="btn btn-small btn-secondary" to="/leaders/sessions/new">Schedule Session</Link>
+          </div>
+        </article>
+
+        <article className="detail-panel">
+          <h3>Role Distribution</h3>
+          <p>Total admins: {users.filter((user) => user.role === 'admin').length}</p>
+          <p>Total students: {users.filter((user) => user.role !== 'admin').length}</p>
         </article>
       </section>
 
@@ -216,7 +172,7 @@ function AdminDashboard() {
         <h3 className="section-title">Most Active Courses</h3>
         {(stats.activeCourses || []).length ? (
           (stats.activeCourses || []).map((course, index) => (
-            <p key={`${course.name}-${index}`}>{course.name}: {course.activityCount || 0} activities</p>
+            <p key={`${course.course || 'course'}-${index}`}>{course.course || 'Unspecified'}: {course.groupCount || 0} groups</p>
           ))
         ) : (
           <p>No activity data available.</p>
