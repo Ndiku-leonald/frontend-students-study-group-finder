@@ -38,7 +38,7 @@ function AppShell() {
   }
 
   return (
-    <div className="app-shell">
+    <div className={isAuthRoute ? 'app-shell app-shell-auth' : 'app-shell'}>
       {!isAuthRoute && <Navbar />}
       <Routes>
         <Route path="/" element={<Dashboard />} />

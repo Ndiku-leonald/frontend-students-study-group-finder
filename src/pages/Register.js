@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { saveToken } from '../services/auth';
-
-const authApi = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
-});
+import api from '../services/api';
 
 function Register() {
   const [form, setForm] = useState({
@@ -24,17 +20,47 @@ function Register() {
   const handleSubmit = async () => {
     setError('');
 
+    const displayName = (form.fullName || form.name || '').trim();
+    const email = (form.email || '').trim();
+
+    if (!displayName || !email || !form.password) {
+      setError('Name, email, and password are required.');
+      return;
+    }
+
     try {
-      const registerResponse = await authApi.post('/auth/register', {
-        name: form.fullName || form.name,
-        fullName: form.fullName || form.name,
-        email: form.email,
+      const primaryPayload = {
+        name: displayName,
+        email,
         password: form.password,
-        program: form.program || form.course,
-        course: form.course || form.program,
-        year: form.year,
-        role: form.role,
-      });
+        role: form.role || 'student',
+      };
+
+      let registerResponse;
+
+      try {
+        registerResponse = await api.post('/auth/register', primaryPayload);
+      } catch (primaryErr) {
+        const shouldRetry = [400, 404, 422].includes(primaryErr?.response?.status);
+
+        if (!shouldRetry) {
+          throw primaryErr;
+        }
+
+        const fallbackPayload = {
+          name: displayName,
+          fullName: displayName,
+          email,
+          password: form.password,
+          role: form.role || 'student',
+        };
+
+        if (form.program?.trim()) fallbackPayload.program = form.program.trim();
+        if (form.course?.trim()) fallbackPayload.course = form.course.trim();
+        if (form.year?.toString().trim()) fallbackPayload.year = form.year.toString().trim();
+
+        registerResponse = await api.post('/auth/register', fallbackPayload);
+      }
 
       const registerToken = registerResponse?.data?.token;
       if (registerToken) {
@@ -43,8 +69,8 @@ function Register() {
         return;
       }
 
-      const loginResponse = await authApi.post('/auth/login', {
-        email: form.email,
+      const loginResponse = await api.post('/auth/login', {
+        email,
         password: form.password,
       });
 
@@ -56,7 +82,15 @@ function Register() {
 
       navigate('/login');
     } catch (err) {
-      setError(err?.response?.data?.message || 'Registration failed. Please check the backend route and required fields.');
+      const data = err?.response?.data;
+      const status = err?.response?.status;
+      const detail =
+        data?.message
+        || data?.error
+        || (Array.isArray(data?.errors) ? data.errors.map((item) => item?.message || item).join(', ') : null)
+        || err?.message;
+
+      setError(detail ? `Registration failed (${status || 'request'}): ${detail}` : 'Registration failed. Please check the backend route and required fields.');
     }
   };
 

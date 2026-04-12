@@ -2,8 +2,9 @@
   "name": "study-group-frontend",
   "version": "1.0.0",
   "private": true,
+  "proxy": "http://localhost:5000",
   "scripts": {
-    "dev": "node -e \"console.log(`Local host: http://localhost:${process.env.PORT || 3000}`)\" && react-scripts start",
+    "dev": "react-scripts start",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

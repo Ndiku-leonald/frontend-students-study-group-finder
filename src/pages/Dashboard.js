@@ -1,39 +1,126 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
-<h3>Welcome, User!</h3>
+import { Link } from 'react-router-dom';
+import api from '../services/api';
+
 function Dashboard() {
   const [groups, setGroups] = useState([]);
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [statusMessage, setStatusMessage] = useState('Explore the active study spaces on campus.');
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/groups')
-      .then(res => setGroups(res.data));
+    const loadGroups = async () => {
+      try {
+        const res = await api.get('/groups');
+        setGroups(Array.isArray(res.data) ? res.data : []);
+      } catch {
+        setGroups([]);
+        setStatusMessage('The group feed is unavailable right now.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadGroups();
   }, []);
 
+  const handleSearch = async (value) => {
+    setSearch(value);
+
+    try {
+      if (!value.trim()) {
+        const res = await api.get('/groups');
+        setGroups(Array.isArray(res.data) ? res.data : []);
+        setStatusMessage('Explore the active study spaces on campus.');
+        return;
+      }
+
+      const res = await api.get(`/groups/search?query=${encodeURIComponent(value)}`);
+      setGroups(Array.isArray(res.data) ? res.data : []);
+      setStatusMessage(`Showing results for "${value}".`);
+    } catch {
+      setGroups([]);
+      setStatusMessage('No study groups matched your search.');
+    }
+  };
+
+  const totalMembers = groups.reduce((count, group) => count + (Number(group.members) || 0), 0);
+
   return (
-    <div>
-      <h2>Groups</h2>
-      {groups.map(g => (
-        <div key={g.id}>
-          <h3>{g.name}</h3>
-          <p>{g.description}</p>
+    <main className="page-content">
+      <header className="page-hero card">
+        <div className="page-hero-copy">
+          <p className="eyebrow">UCU Study Group Finder</p>
+          <h2>find your droup learn with ease</h2>
+          <p className="hero-text">
+            Discover study groups, create sessions, and keep your academic network organized in one place.
+          </p>
+          <div className="hero-actions">
+            <Link to="/groups/new" className="btn btn-primary">Create Group</Link>
+            <Link to="/leaders/sessions/new" className="btn btn-secondary">Plan Session</Link>
+          </div>
         </div>
-      ))}
-    </div>
+
+        <div className="hero-metrics" aria-label="Study group summary">
+          <div className="metric-card">
+            <span className="metric-value">{groups.length}</span>
+            <span className="metric-label">Groups</span>
+          </div>
+          <div className="metric-card">
+            <span className="metric-value">{totalMembers}</span>
+            <span className="metric-label">Members</span>
+          </div>
+          <div className="metric-card metric-card-accent">
+            <span className="metric-value">Live</span>
+            <span className="metric-label">Search ready</span>
+          </div>
+        </div>
+      </header>
+
+      <section className="card page-card">
+        <div className="section-header">
+          <div>
+            <p className="eyebrow eyebrow-muted">Directory</p>
+            <h3 className="section-title">Study groups</h3>
+          </div>
+          <p className="section-note">{statusMessage}</p>
+        </div>
+
+        <div className="search-row">
+          <input
+            className="search-input"
+            placeholder="Search by course, topic, or group name"
+            value={search}
+            onChange={(e) => handleSearch(e.target.value)}
+          />
+        </div>
+
+        {loading ? (
+          <div className="state-card">Loading groups...</div>
+        ) : groups.length ? (
+          <div className="group-grid">
+            {groups.map((group) => (
+              <article className="group-card" key={group.id || group._id || group.name}>
+                <div className="group-card-top">
+                  <div>
+                    <div className="group-course">{group.course || 'Study Group'}</div>
+                    <h3 className="group-title">{group.name}</h3>
+                  </div>
+                  <div className="group-badge">{group.members ?? 0} members</div>
+                </div>
+                <p className="group-description">{group.description || 'No description provided yet.'}</p>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="state-card state-card-empty">
+            <h3>No groups found</h3>
+            <p>Try a different search or create the first group for your course.</p>
+          </div>
+        )}
+      </section>
+    </main>
   );
 }
-<input 
-  placeholder="Search"
-  onChange={async (e) => {
-    const res = await axios.get(`http://localhost:5000/api/groups/search?query=${e.target.value}`);
-    setGroups(res.data);
-  }}
-/>;
-<button onClick={async () => {
-  await axios.post(`http://localhost:5000/api/favorites/${g.id}`, {}, {
-    headers: { Authorization: localStorage.getItem("token") }
-  });
-}}>
-  ❤️ Save
-</button>
+
 export default Dashboard;
-<button>❤️ Save</button>
