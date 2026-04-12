@@ -4,10 +4,26 @@ export function saveToken(token) {
 
 export function clearToken() {
   localStorage.removeItem('token');
+  localStorage.removeItem('user');
 }
 
 export function getToken() {
   return localStorage.getItem('token');
+}
+
+export function saveUser(user) {
+  localStorage.setItem('user', JSON.stringify(user));
+}
+
+export function getUser() {
+  const userStr = localStorage.getItem('user');
+  if (!userStr) return null;
+
+  try {
+    return JSON.parse(userStr);
+  } catch {
+    return null;
+  }
 }
 
 export function getUserFromToken() {
@@ -33,7 +49,7 @@ export function getUserFromToken() {
 }
 
 export function getUserRole() {
-  const user = getUserFromToken();
+  const user = getUser() || getUserFromToken();
 
   if (!user) {
     return 'student';
@@ -43,11 +59,16 @@ export function getUserRole() {
 }
 
 export function getUserDisplayName() {
-  const user = getUserFromToken();
+  const user = getUser() || getUserFromToken();
 
   if (!user) {
     return 'Study Group User';
   }
 
-  return user.fullName || user.name || user.username || user.email || 'Study Group User';
+  return user.name || user.fullName || user.displayName || 'Study Group User';
+}
+
+export function getUserId() {
+  const user = getUser() || getUserFromToken();
+  return user?.id || null;
 }

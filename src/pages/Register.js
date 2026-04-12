@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { saveToken } from '../services/auth';
+import { saveToken, saveUser } from '../services/auth';
 import api from '../services/api';
 
 function Register() {
@@ -65,6 +65,7 @@ function Register() {
       const registerToken = registerResponse?.data?.token;
       if (registerToken) {
         saveToken(registerToken);
+        saveUser(registerResponse.data.user);
         navigate('/');
         return;
       }
@@ -76,6 +77,7 @@ function Register() {
 
       if (loginResponse?.data?.token) {
         saveToken(loginResponse.data.token);
+        saveUser(loginResponse.data.user);
         navigate('/');
         return;
       }

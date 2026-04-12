@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { saveToken } from '../services/auth';
+import { saveToken, saveUser } from '../services/auth';
 import api from '../services/api';
 
 function Login() {
@@ -14,6 +14,7 @@ function Login() {
     try {
       const res = await api.post('/auth/login', form);
       saveToken(res.data.token);
+      saveUser(res.data.user);
       navigate('/');
     } catch (err) {
       setError(err?.response?.data?.message || 'Login failed. Check the backend route and your credentials.');

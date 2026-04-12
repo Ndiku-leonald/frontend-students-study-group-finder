@@ -608,6 +608,120 @@ button.btn-secondary:hover {
   margin-bottom: 0;
 }
 
+/* New styles for authentication and group management */
+.welcome-message {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary);
+  margin: 8px 0 0 0;
+}
+
+.form-success {
+  color: #059669;
+  background: rgba(5, 150, 105, 0.1);
+  border: 1px solid rgba(5, 150, 105, 0.2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.form-error {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.1);
+  border: 1px solid rgba(220, 38, 38, 0.2);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.group-card-leader {
+  border: 2px solid var(--primary);
+  background: linear-gradient(135deg, rgba(39, 93, 241, 0.05), rgba(255, 255, 255, 0.95));
+}
+
+.leader-badge {
+  color: var(--primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+.group-leader {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.group-location {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+.member-status {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  background: rgba(39, 93, 241, 0.1);
+  border-radius: 12px;
+  display: inline-block;
+}
+
+.card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+/* New styles for role-based dashboards */
+.group-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.group-item:last-child {
+  border-bottom: none;
+}
+
+.user-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.user-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.user-item:last-child {
+  border-bottom: none;
+}
+
+.user-email {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.user-role {
+  font-size: 0.8rem;
+  padding: 4px 8px;
+  background: rgba(39, 93, 241, 0.1);
+  color: var(--primary);
+  border-radius: 12px;
+  font-weight: 600;
+}
+
 @media (max-width: 1024px) {
   .app-shell {
     width: 100%;
