@@ -2,6 +2,7 @@
   "name": "study-group-frontend",
   "version": "1.0.0",
   "private": true,
+  "homepage": "https://ndiku-leonald.github.io/frontend-students-study-group-finder",
   "proxy": "http://localhost:5000",
   "scripts": {
     "dev": "react-scripts start",
@@ -13,7 +14,9 @@
     "pm2:restart": "pm2 restart study-group-frontend",
     "pm2:stop": "pm2 stop study-group-frontend",
     "pm2:delete": "pm2 delete study-group-frontend",
-    "pm2:logs": "pm2 logs study-group-frontend"
+    "pm2:logs": "pm2 logs study-group-frontend",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "axios": "^1.15.0",
@@ -37,6 +40,7 @@
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2"
+    "@testing-library/react": "^16.3.2",
+    "gh-pages": "^6.2.0"
   }
 }

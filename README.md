@@ -54,3 +54,15 @@ React web application for student/admin workflows: authentication, dashboards, g
 
 ## Build
 - npm run build
+
+## Deploy To GitHub Pages
+1. Ensure backend is hosted on a public server (GitHub Pages can only host the frontend static files).
+2. Copy `.env.production.example` to `.env.production` and set:
+   REACT_APP_API_BASE_URL=https://your-backend-domain.com/api
+3. Install dependencies:
+   npm install
+4. Deploy:
+   npm run deploy
+
+This publishes the frontend to:
+https://ndiku-leonald.github.io/frontend-students-study-group-finder
