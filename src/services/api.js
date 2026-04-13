@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// Resolve the backend base URL from environment variables so deployments stay flexible.
 const apiBase = process.env.REACT_APP_API_BASE_URL
   || (process.env.REACT_APP_API_URL ? `${process.env.REACT_APP_API_URL}/api` : 'http://localhost:5000/api');
 
@@ -8,6 +9,8 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
+  // Attach the access token automatically to every authenticated request.
+  // This removes the need to manually pass the token from each page.
   const token = localStorage.getItem('token');
 
   if (token) {
@@ -22,9 +25,10 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid, clear token and redirect to login
+      // Expired or invalid tokens should force the user back to login.
+      // Redirecting here centralizes auth failure handling in one place.
       localStorage.removeItem('token');
-      window.location.hash = '#/login';
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   }

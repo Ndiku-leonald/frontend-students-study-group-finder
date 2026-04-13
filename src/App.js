@@ -1,4 +1,4 @@
-import { HashRouter, Navigate, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter, Navigate, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Register from './pages/Register';
 import Login from './pages/Login';
@@ -16,9 +16,13 @@ import InvitesPage from './pages/InvitesPage';
 import Profile from './pages/Profile';
 import { getToken, getUserRole } from './services/auth';
 
+// Use the signed-in role to route the user to the correct dashboard.
+// The app does not rely on a separate auth store; it reads the stored session data.
 const getDashboardPath = (role) => (role === 'admin' ? '/dashboard/admin' : '/dashboard/student');
 
 function AppShell() {
+  // The shell handles auth gating before the route tree renders.
+  // This keeps route-level redirects consistent across the whole app.
   const location = useLocation();
   const isAuthRoute = location.pathname === '/login' || location.pathname === '/register';
   const token = getToken();
@@ -40,8 +44,12 @@ function AppShell() {
 
   return (
     <div className={isAuthRoute ? 'app-shell app-shell-auth' : 'app-shell'}>
+      {/* Hide the sidebar on auth pages so the login flow stays focused. */}
+      {/* The navbar only appears after authentication succeeds. */}
       {!isAuthRoute && <Navbar />}
       <Routes>
+        {/* Redirect the home route to the appropriate dashboard for the current role. */}
+        {/* This makes the root URL behave like a smart landing page. */}
         <Route path="/" element={<Navigate to={dashboardPath} replace />} />
         <Route path="/dashboard" element={<Navigate to={dashboardPath} replace />} />
         <Route path="/groups" element={<GroupList />} />
@@ -65,9 +73,10 @@ function AppShell() {
 
 function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
+      {/* BrowserRouter enables client-side navigation without page reloads. */}
       <AppShell />
-    </HashRouter>
+    </BrowserRouter>
   );
 }
 

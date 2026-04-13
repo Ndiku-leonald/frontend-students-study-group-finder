@@ -4,6 +4,7 @@ import api from '../services/api';
 import { getToken, getUserFromToken } from '../services/auth';
 
 function GroupList() {
+  // The directory page combines search, membership state, and join/leave actions.
   const [groups, setGroups] = useState([]);
   const [userGroups, setUserGroups] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -33,7 +34,7 @@ function GroupList() {
     try {
       await api.post(`/groups/join/${groupId}`);
       setJoinMessage('You joined the group successfully!');
-      // Refresh groups to update member counts
+      // Refresh the list so member counts and membership state stay accurate.
       await fetchGroups();
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'Unable to join this group right now.';
@@ -62,6 +63,7 @@ function GroupList() {
 
   const fetchGroups = async () => {
     try {
+      // Build the search query from the visible filters on the page.
       const params = new URLSearchParams();
       if (filters.title.trim()) params.set('title', filters.title.trim());
       if (filters.course.trim()) params.set('course', filters.course.trim());

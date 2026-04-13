@@ -4,6 +4,7 @@ import api from '../services/api';
 import { getUserId, getUserRole } from '../services/auth';
 
 function SessionScheduler() {
+  // Presenters can use this page to explain how leaders publish future study dates.
   const navigate = useNavigate();
   const [form, setForm] = useState({
     groupId: '',
@@ -19,6 +20,7 @@ function SessionScheduler() {
   useEffect(() => {
     const loadGroups = async () => {
       try {
+        // Admins see every group, while students only see groups they own.
         const role = getUserRole();
         const endpoint = role === 'admin' ? '/groups' : '/users/me/groups';
         const res = await api.get(endpoint);

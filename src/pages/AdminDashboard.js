@@ -4,6 +4,7 @@ import api from '../services/api';
 import { getUserAdminCode, getUserDisplayName, getToken } from '../services/auth';
 
 function AdminDashboard() {
+  // Admin dashboard shows high-level platform health and user management.
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalGroups: 0,
@@ -25,6 +26,7 @@ function AdminDashboard() {
 
     const loadData = async () => {
       try {
+        // Pull stats, user listings, and recent groups together for one coherent admin view.
         const [statsRes, usersRes, recentRes] = await Promise.allSettled([
           api.get('/dashboard/admin'),
           api.get('/auth/users'),
@@ -95,7 +97,7 @@ function AdminDashboard() {
 
       {error && <p className="form-error">{error}</p>}
 
-      {/* Admin Statistics */}
+      {/* Snapshot metrics make it easy to read the platform state at a glance. */}
       <section className="card page-card metrics-grid">
         <article className="mini-metric">
           <h3>{stats.totalUsers}</h3>
@@ -111,7 +113,7 @@ function AdminDashboard() {
         </article>
       </section>
 
-      {/* User Management */}
+      {/* User management gives the presenter a simple way to explain account roles. */}
       <section className="card page-card">
         <h3 className="section-title">User Management</h3>
         {loading ? (
@@ -134,7 +136,7 @@ function AdminDashboard() {
         )}
       </section>
 
-      {/* Admin Activity */}
+      {/* Recent groups and shortcuts are grouped together as operational actions. */}
       <section className="card page-card detail-grid">
         <article className="detail-panel">
           <h3>Recently Created Groups</h3>
@@ -169,7 +171,7 @@ function AdminDashboard() {
         </article>
       </section>
 
-      {/* Active Courses */}
+      {/* Course activity shows which subjects are attracting the most groups. */}
       <section className="card page-card">
         <h3 className="section-title">Most Active Courses</h3>
         {(stats.activeCourses || []).length ? (

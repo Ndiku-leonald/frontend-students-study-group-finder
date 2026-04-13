@@ -9,6 +9,7 @@ jest.mock('../services/auth', () => ({
 }));
 
 describe('GroupDetail smoke test', () => {
+  // Mock the API so the component can render and submit without a real backend.
   beforeEach(() => {
     jest.clearAllMocks();
 

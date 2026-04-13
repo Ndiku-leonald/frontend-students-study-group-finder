@@ -4,11 +4,13 @@ import { saveToken, saveUser } from '../services/auth';
 import api from '../services/api';
 
 function Login() {
+  // Keep the role and admin access code in the form so one screen handles both logins.
   const [form, setForm] = useState({ role: 'student', accessCode: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
+    // Validate the minimum credentials before calling the API.
     setError('');
 
     if (!(form.email || '').trim() || !(form.password || '').trim()) {
@@ -22,6 +24,7 @@ function Login() {
     }
 
     try {
+      // Normalize user input so the backend gets predictable values.
       const payload = {
         ...form,
         email: (form.email || '').trim().toLowerCase(),

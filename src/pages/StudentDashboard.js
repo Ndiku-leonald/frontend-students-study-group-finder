@@ -4,6 +4,7 @@ import api from '../services/api';
 import { getUserDisplayName, getToken } from '../services/auth';
 
 function StudentDashboard() {
+  // Student dashboard combines the user's groups, upcoming sessions, and recent activity.
   const [joinedGroups, setJoinedGroups] = useState([]);
   const [upcomingSessions, setUpcomingSessions] = useState([]);
   const [recentGroups, setRecentGroups] = useState([]);
@@ -19,6 +20,7 @@ function StudentDashboard() {
 
     const loadData = async () => {
       try {
+        // Fetch every dashboard panel in parallel so the page loads faster.
         const [groupsRes, sessionsRes, recentRes, allGroupsRes] = await Promise.allSettled([
           api.get('/users/me/groups'),
           api.get('/users/me/sessions/upcoming'),
@@ -43,7 +45,7 @@ function StudentDashboard() {
   const joinGroup = async (groupId) => {
     try {
       await api.post(`/groups/join/${groupId}`);
-      // Refresh joined groups
+      // Refresh the membership list so the UI reflects the new state immediately.
       const groupsRes = await api.get('/users/me/groups');
       setJoinedGroups(groupsRes.data || []);
     } catch (err) {

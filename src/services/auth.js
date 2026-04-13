@@ -1,8 +1,12 @@
 export function saveToken(token) {
+  // Persist the JWT for future API calls.
+  // localStorage keeps the session available after refreshes.
   localStorage.setItem('token', token);
 }
 
 export function clearToken() {
+  // Remove both token and cached profile data on sign-out.
+  // Clearing both values prevents stale user state from leaking into the UI.
   localStorage.removeItem('token');
   localStorage.removeItem('user');
 }
@@ -34,6 +38,7 @@ export function getUserFromToken() {
   }
 
   try {
+    // JWTs are base64url encoded, so the payload needs a small normalization step.
     const [, payload] = token.split('.');
     if (!payload) {
       return null;
@@ -49,6 +54,8 @@ export function getUserFromToken() {
 }
 
 export function getUserRole() {
+  // Prefer the cached user object, then fall back to the JWT payload.
+  // This lets the app still route correctly even if localStorage entries are partial.
   const user = getUser() || getUserFromToken();
 
   if (!user) {

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import api from '../services/api';
 
 function CreateSession() {
+  // This lightweight form creates a session without forcing a full group editor.
   const [form, setForm] = useState({ groupId: '', date: '', time: '', location: '', description: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');

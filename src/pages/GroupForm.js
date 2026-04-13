@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import api from '../services/api';
 
 function GroupForm() {
+  // One form supports both create and edit flows so the UI stays compact.
   const { groupId } = useParams();
   const navigate = useNavigate();
   const isEdit = Boolean(groupId);
@@ -20,6 +21,7 @@ function GroupForm() {
     if (!isEdit) return;
 
     const loadGroup = async () => {
+      // Prefill the form when editing an existing group.
       const res = await api.get(`/groups/${groupId}`);
       setForm({
         name: res.data.name || '',

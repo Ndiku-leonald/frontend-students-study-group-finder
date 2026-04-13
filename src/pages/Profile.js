@@ -3,6 +3,7 @@ import api from '../services/api';
 import { saveUser } from '../services/auth';
 
 function Profile() {
+  // The profile page lets the user update the name and academic details stored in the token cache.
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -18,6 +19,7 @@ function Profile() {
   useEffect(() => {
     const loadProfile = async () => {
       try {
+        // Pull the server-side profile so the form reflects the latest saved data.
         const res = await api.get('/users/me');
         const data = res.data || {};
         setForm({
@@ -56,6 +58,7 @@ function Profile() {
 
     try {
       const res = await api.put('/users/me', payload);
+      // Update the cached profile so the navbar and dashboards stay in sync.
       saveUser(res.data);
       setMessage('Profile updated successfully.');
       setForm((prev) => ({

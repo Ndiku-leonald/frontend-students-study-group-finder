@@ -4,6 +4,7 @@ import api from '../services/api';
 import { getUserId } from '../services/auth';
 
 function GroupDetail() {
+  // This page is the most detailed view: members, sessions, posts, and invites.
   const { groupId } = useParams();
   const [group, setGroup] = useState(null);
   const [members, setMembers] = useState([]);
@@ -19,6 +20,7 @@ function GroupDetail() {
   const currentUserId = getUserId();
 
   const loadGroupData = async () => {
+    // Pull all sections in parallel so the detail page can render as soon as data arrives.
     const [groupRes, membersRes, sessionsRes, postsRes] = await Promise.allSettled([
       api.get(`/groups/${groupId}`),
       api.get(`/groups/${groupId}/members`),
@@ -74,6 +76,7 @@ function GroupDetail() {
     const content = newPost.trim();
     if (!content) return;
 
+    // Posts are used as the simple group message feed.
     await api.post(`/posts/${groupId}`, { content });
     setNewPost('');
     await loadGroupData();

@@ -4,6 +4,7 @@ import api from '../services/api';
 import { getToken } from '../services/auth';
 
 function CreateGroup() {
+  // Keep the form minimal because the backend only requires a few core fields.
   const [form, setForm] = useState({
     name: '',
     course: '',
@@ -36,7 +37,7 @@ function CreateGroup() {
     try {
       const response = await api.post('/groups/create', form);
       setSuccess('Group created successfully!');
-      // Navigate to the group detail page or groups list
+      // Return to the directory after a short pause so the success message is visible.
       setTimeout(() => {
         navigate('/groups');
       }, 1500);

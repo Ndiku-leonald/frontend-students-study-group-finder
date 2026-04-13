@@ -3,6 +3,7 @@ import api from '../services/api';
 import { getUserRole } from '../services/auth';
 
 function GroupChat() {
+  // The chat screen reuses group posts as lightweight messages and files as attachments.
   const [groupId, setGroupId] = useState('');
   const [groups, setGroups] = useState([]);
   const [posts, setPosts] = useState([]);
@@ -13,6 +14,7 @@ function GroupChat() {
 
   const loadData = async (selectedGroupId) => {
     if (!selectedGroupId) return;
+    // Load the chat feed and the shared files together for the selected group.
     const [postsRes, filesRes] = await Promise.all([
       api.get(`/posts/${selectedGroupId}`),
       api.get(`/posts/${selectedGroupId}/files`)

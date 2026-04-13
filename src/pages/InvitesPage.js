@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import api from '../services/api';
 
 function InvitesPage() {
+  // Keep the invite inbox separate from the group detail page for quick review.
   const [invites, setInvites] = useState([]);
 
   const loadInvites = async () => {
@@ -18,6 +19,7 @@ function InvitesPage() {
   }, []);
 
   const respond = async (inviteId, response) => {
+    // Responses are sent back to the backend and the list refreshes afterward.
     await api.post(`/invites/${inviteId}/respond`, { response });
     loadInvites();
   };

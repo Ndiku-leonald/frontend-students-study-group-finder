@@ -4,6 +4,7 @@ import api from '../services/api';
 import { getUserDisplayName, getToken } from '../services/auth';
 
 function Dashboard() {
+  // The public dashboard doubles as the main directory landing page.
   const [groups, setGroups] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -16,6 +17,7 @@ function Dashboard() {
   useEffect(() => {
     const loadGroups = async () => {
       try {
+        // Load the latest group directory snapshot for the hero metrics and cards.
         const res = await api.get('/groups');
         setGroups(Array.isArray(res.data) ? res.data : []);
         setError('');
@@ -38,6 +40,7 @@ function Dashboard() {
   const handleSearch = async (value) => {
     if (!isAuthenticated) return;
 
+    // Search resets to the full directory when the input is cleared.
     setSearch(value);
     setError('');
 
@@ -63,6 +66,7 @@ function Dashboard() {
 
   return (
     <main className="page-content">
+      {/* Hero section summarizes the app and gives fast access to the main actions. */}
       <header className="page-hero card">
         <div className="page-hero-copy">
           <p className="eyebrow">UCU Study Group Finder</p>

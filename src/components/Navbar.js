@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { clearToken, getUserDisplayName, getUserRole } from '../services/auth';
 
 function Navbar() {
+  // Read the stored profile once so the sidebar can show a quick identity summary.
   const [displayName, setDisplayName] = useState(getUserDisplayName());
   const [role, setRole] = useState(getUserRole());
 
@@ -13,6 +14,7 @@ function Navbar() {
 
   const roleLabel = role === 'admin' ? 'Administrator' : 'Student';
   const roleBadgeClass = role === 'admin' ? 'sidebar-role-badge sidebar-role-badge-admin' : 'sidebar-role-badge sidebar-role-badge-student';
+  // Use initials as a compact avatar when no profile image exists.
   const avatarText = displayName
     .split(' ')
     .filter(Boolean)
@@ -54,6 +56,7 @@ function Navbar() {
         <button
           className="sidebar-logout"
           onClick={() => {
+            // Clear local auth state and force a return to the login screen.
             clearToken();
             window.location.href = '/login';
           }}

@@ -4,6 +4,7 @@ import { saveToken, saveUser } from '../services/auth';
 import api from '../services/api';
 
 function Register() {
+  // The form supports both student and admin onboarding.
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -18,6 +19,7 @@ function Register() {
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
+    // Reset prior errors before validating the new submission.
     setError('');
     setAdminCode('');
 
@@ -41,6 +43,7 @@ function Register() {
     }
 
     try {
+      // Only send the fields that the chosen account type needs.
       const payload = {
         name: displayName,
         email: email.toLowerCase(),
@@ -58,6 +61,7 @@ function Register() {
 
       const registerToken = registerResponse?.data?.token;
       if (registerToken) {
+        // New accounts are logged in immediately after creation.
         saveToken(registerToken);
         saveUser(registerResponse.data.user);
         if (registerResponse.data.user?.adminCode) {
@@ -75,6 +79,7 @@ function Register() {
       });
 
       if (loginResponse?.data?.token) {
+        // Fallback login covers backends that return a token only after authentication.
         saveToken(loginResponse.data.token);
         saveUser(loginResponse.data.user);
         if (loginResponse.data.user?.adminCode) {
