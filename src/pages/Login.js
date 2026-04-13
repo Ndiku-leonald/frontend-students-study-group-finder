@@ -11,6 +11,11 @@ function Login() {
   const handleSubmit = async () => {
     setError('');
 
+    if (!(form.email || '').trim() || !(form.password || '').trim()) {
+      setError('Email and password are required.');
+      return;
+    }
+
     if (form.role === 'admin' && !form.accessCode.trim()) {
       setError('Admin access code is required.');
       return;

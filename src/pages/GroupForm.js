@@ -13,6 +13,8 @@ function GroupForm() {
     faculty: '',
     description: '',
   });
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!isEdit) return;
@@ -32,13 +34,28 @@ function GroupForm() {
   }, [groupId, isEdit]);
 
   const handleSubmit = async () => {
-    if (isEdit) {
-      await api.put(`/groups/${groupId}`, form);
-    } else {
-      await api.post('/groups/create', form);
+    if (!form.name.trim() || !form.course.trim()) {
+      setError('Group name and course are required.');
+      return;
     }
 
-    navigate('/groups');
+    setError('');
+    setSubmitting(true);
+
+    try {
+      if (isEdit) {
+        await api.put(`/groups/${groupId}`, form);
+      } else {
+        await api.post('/groups/create', form);
+      }
+
+      navigate('/groups');
+    } catch (err) {
+      const message = err?.response?.data?.message || err?.response?.data?.error || 'Failed to save group. Please try again.';
+      setError(message);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -49,12 +66,13 @@ function GroupForm() {
       </header>
 
       <section className="card form-card page-card">
+        {error ? <p className="form-error">{error}</p> : null}
         <input className="form-input" placeholder="Group name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
         <input className="form-input" placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
         <input className="form-input" placeholder="Course" value={form.course} onChange={(e) => setForm({ ...form, course: e.target.value })} />
         <input className="form-input" placeholder="Faculty" value={form.faculty} onChange={(e) => setForm({ ...form, faculty: e.target.value })} />
         <textarea className="form-input form-textarea" placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-        <button className="btn btn-primary" onClick={handleSubmit}>{isEdit ? 'Save changes' : 'Create group'}</button>
+        <button className="btn btn-primary" onClick={handleSubmit} disabled={submitting}>{submitting ? 'Saving...' : (isEdit ? 'Save changes' : 'Create group')}</button>
       </section>
     </main>
   );
