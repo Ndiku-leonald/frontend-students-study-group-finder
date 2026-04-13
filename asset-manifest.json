@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/frontend-students-study-group-finder/static/css/main.6c277e05.css",
+    "main.js": "/frontend-students-study-group-finder/static/js/main.2e1993ca.js",
+    "index.html": "/frontend-students-study-group-finder/index.html",
+    "main.6c277e05.css.map": "/frontend-students-study-group-finder/static/css/main.6c277e05.css.map",
+    "main.2e1993ca.js.map": "/frontend-students-study-group-finder/static/js/main.2e1993ca.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.6c277e05.css",
+    "static/js/main.2e1993ca.js"
+  ]
+}
