@@ -13,6 +13,7 @@ import SessionScheduler from './pages/SessionScheduler';
 import StudentDashboard from './pages/StudentDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import InvitesPage from './pages/InvitesPage';
+import Profile from './pages/Profile';
 import { getToken, getUserRole } from './services/auth';
 
 const getDashboardPath = (role) => (role === 'admin' ? '/dashboard/admin' : '/dashboard/student');
@@ -51,6 +52,7 @@ function AppShell() {
         <Route path="/dashboard/student" element={role === 'student' ? <StudentDashboard /> : <Navigate to={dashboardPath} replace />} />
         <Route path="/dashboard/admin" element={role === 'admin' ? <AdminDashboard /> : <Navigate to={dashboardPath} replace />} />
         <Route path="/invites" element={<InvitesPage />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/create-group" element={<CreateGroup />} />

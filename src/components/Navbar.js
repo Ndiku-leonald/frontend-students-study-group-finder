@@ -46,6 +46,7 @@ function Navbar() {
         <Link to="/groups/new" className="sidebar-link">Create Group</Link>
         <Link to="/leaders/sessions/new" className="sidebar-link">Schedule Session</Link>
         <Link to="/invites" className="sidebar-link">Invites</Link>
+        <Link to="/profile" className="sidebar-link">My Profile</Link>
         <Link to="/chat" className="sidebar-link">Group Chat</Link>
       </nav>
 

@@ -8,6 +8,7 @@ function GroupList() {
   const [userGroups, setUserGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [joiningGroupId, setJoiningGroupId] = useState(null);
+  const [leavingGroupId, setLeavingGroupId] = useState(null);
   const [joinMessage, setJoinMessage] = useState('');
   const [error, setError] = useState('');
   const [filters, setFilters] = useState({
@@ -39,6 +40,23 @@ function GroupList() {
       setError(errorMsg);
     } finally {
       setJoiningGroupId(null);
+    }
+  };
+
+  const leaveGroup = async (groupId) => {
+    setJoinMessage('');
+    setError('');
+    setLeavingGroupId(groupId);
+
+    try {
+      await api.post(`/groups/leave/${groupId}`);
+      setJoinMessage('You left the group successfully.');
+      await fetchGroups();
+    } catch (err) {
+      const errorMsg = err.response?.data?.message || 'Unable to leave this group right now.';
+      setError(errorMsg);
+    } finally {
+      setLeavingGroupId(null);
     }
   };
 
@@ -128,6 +146,10 @@ function GroupList() {
             <div className="group-grid">
               {groups.map((group) => (
                 <article className={`group-card ${isGroupLeader(group) ? 'group-card-leader' : ''}`} key={group.id}>
+                  <div className="group-message-counter" title="Messages in this group">
+                    <span className="group-message-icon">💬</span>
+                    <span>{group.messageCount ?? 0}</span>
+                  </div>
                   {isGroupLeader(group) && <div className="group-leader-badge">Group Leader</div>}
                   <div className="group-card-top">
                     <div>
@@ -156,7 +178,16 @@ function GroupList() {
                       </button>
                     )}
                     {isGroupMember(group) && !isGroupLeader(group) && (
-                      <span className="member-status">Member</span>
+                      <>
+                        <span className="member-status">Member</span>
+                        <button
+                          className="btn btn-secondary btn-small"
+                          onClick={() => leaveGroup(group.id)}
+                          disabled={leavingGroupId === group.id}
+                        >
+                          {leavingGroupId === group.id ? 'Leaving...' : 'Leave Group'}
+                        </button>
+                      </>
                     )}
                     <Link className="btn btn-small" to={`/groups/${group.id}`}>View details</Link>
                   </div>

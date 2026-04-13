@@ -9,6 +9,7 @@ function AdminDashboard() {
     totalGroups: 0,
     totalSessions: 0,
     activeCourses: [],
+    groupWork: [],
   });
   const [users, setUsers] = useState([]);
   const [recentGroups, setRecentGroups] = useState([]);
@@ -36,6 +37,7 @@ function AdminDashboard() {
             totalGroups: statsRes.value.data.totalGroups || 0,
             totalSessions: statsRes.value.data.totalSessions || 0,
             activeCourses: statsRes.value.data.mostActiveCourses || [],
+            groupWork: statsRes.value.data.groupWork || [],
           });
         }
 
@@ -122,7 +124,7 @@ function AdminDashboard() {
                   <strong>{user.name}</strong>
                   <span className="user-email"> ({user.email})</span>
                 </div>
-                <span className="user-role">{user.role === 'admin' ? 'admin' : 'student'}</span>
+                <span className="user-role">{user.role === 'admin' ? 'administrator' : 'student'}</span>
               </div>
             ))}
             {users.length > 15 && <p>... and {users.length - 15} more users</p>}
@@ -176,6 +178,23 @@ function AdminDashboard() {
           ))
         ) : (
           <p>No activity data available.</p>
+        )}
+      </section>
+
+      <section className="card page-card">
+        <h3 className="section-title">Most Active Groups</h3>
+        {(stats.groupWork || []).length ? (
+          (stats.groupWork || []).map((group) => (
+            <div key={group.id} className="group-item">
+              <div>
+                <strong>{group.name}</strong>
+                <div className="user-email">{group.course || 'No course'}</div>
+              </div>
+              <span className="user-role">Score {group.activityScore || 0} | {group.memberCount} members | {group.postCount} posts | {group.sessionCount} sessions</span>
+            </div>
+          ))
+        ) : (
+          <p>No group activity yet.</p>
         )}
       </section>
     </main>
